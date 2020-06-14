@@ -49,13 +49,13 @@ public class RegisterDemo
 		/* Create a list of items */
 		List<Item> grocery = new ArrayList<Item>();
 		grocery.add(new Item(Upc.generateCode("12345678901"), "Bananas", 1, 1.5));
-		grocery.add(new Item(Upc.generateCode("22804918500"), "Beef", 0.5, 5.75));
+		grocery.add(new Item(Upc.generateCode("22804918500"), "Beef", Integer.MAX_VALUE, 5.75));
 		grocery.add(new Item(Upc.generateCode("12345678901"), "Bananas", -1, 1.5));
 		grocery.add(new Item(Upc.generateCode("64748119599"), "Chewing gum", 2, 0.99));
 		grocery.add(new Item(Upc.generateCode("44348225996"), "Gobstoppers", 1, 0.99));
 		grocery.add(new Item(Upc.generateCode("34323432343"), "Nerds", 2, 1.44));
 		grocery.add(new Item(Upc.generateCode("54323432343"), "Doritos Club", 1, 0.5));
-		grocery.add(new Item(Upc.generateCode("54323433343"), "Doritos", 1, -1.25));
+		grocery.add(new Item(Upc.generateCode("54323433343"), "Doritos", 1, 1.25));
 
 
 		// Print receipt
