@@ -57,7 +57,7 @@ class RegisterTest {
 	 * 
 	 * I8 : Prix <= 0 
 	 * I9 Prix >=36
-	 *
+	 * 
 	 * Rabais : 
 	 * V11 : 5 produits
 	 *
@@ -185,7 +185,7 @@ class RegisterTest {
 
 	/**
 	 * Liste avec item qui possède un CUP trop petit
-	 * I2 (V1 OU V2) V6 (SI V1 -> V9 OU SI V2 ->V8)
+	 * I2 (V1) V6 (SI V1 -> V9 OU SI V2 ->V8)
 	 */
 	@Test
 	void testInvalidCupTooSmall() {
@@ -196,10 +196,37 @@ class RegisterTest {
 				System.out.println(register.print(grocery));
 		});
 	}
+	/**
+	 * Liste avec item fractionaire qui possède un CUP trop petit
+	 * I2 (V2) V6 (SI V1 -> V9 OU SI V2 ->V8)
+	 */
+	@Test
+	void testInvalidCupTooSmallFrac() {
+		assertThrows(UpcTooShortException.class, () -> {
+				register.changePaper(PaperRoll.LARGE_ROLL);
+				grocery = new ArrayList<Item>();
+				grocery.add(new Item(Upc.generateCode("223"), "Chaise ", 1, 2));
+				System.out.println(register.print(grocery));
+		});
+	}
+	
+	/**
+	 * Liste avec Coupon qui possède un CUP trop petit
+	 * I2 (V3) V6 (SI V1 -> V9 OU SI V2 ->V8)
+	 */
+	@Test
+	void testInvalidCupTooSmallCoupon() {
+		assertThrows(UpcTooShortException.class, () -> {
+				register.changePaper(PaperRoll.LARGE_ROLL);
+				grocery = new ArrayList<Item>();
+				grocery.add(new Item(Upc.generateCode("523"), "Coupon ", 1, 2));
+				System.out.println(register.print(grocery));
+		});
+	}
 
 	/**
 	 * Liste avec item qui possède un CUP trop grand
-	 * I1 (V1 OU V2) V6 (SI V1 -> V9 OU SI V2 ->V8)
+	 * I1 (V1 OU V2 OU V3) V6 (SI V1 -> V9 OU SI V2 ->V8)
 	 */
 	@Test
 	void testInvalidCupTooBig() {
@@ -230,6 +257,42 @@ class RegisterTest {
 			System.out.println(register.print(grocery));
 		});
 	}
+
+	/**
+	 * Coupon avec un prix négatif
+	 * I8 (V3) V6 (SI V1 -> V9 OU SI V2 ->V8)
+	 */
+	@Test
+	void testAmountNegativeCoupon() {
+		assertThrows(AmountException.class, () -> {
+			register.changePaper(PaperRoll.LARGE_ROLL);
+			/* Create a list of items */
+			grocery = new ArrayList<Item>();
+			grocery.add(new Item(Upc.generateCode("12345678901"), "Bananas", 1, 1.5));
+			grocery.add(new Item(Upc.generateCode("22804918500"), "Beef", 0.5, 5.75));
+			grocery.add(new Item(Upc.generateCode("12345678901"), "Bananas", -1, 1.5));
+			grocery.add(new Item(Upc.generateCode("54748119599"), "Coupon", 2, -3.99));
+			System.out.println(register.print(grocery));
+		});
+	}
+	
+	/**
+	 * Item Fractionnaire avec un prix négatif
+	 * I8 (V2) V6 (SI V1 -> V9 OU SI V2 ->V8)
+	 */
+	@Test
+	void testAmountNegativeFrac() {
+		assertThrows(AmountException.class, () -> {
+			register.changePaper(PaperRoll.LARGE_ROLL);
+			/* Create a list of items */
+			grocery = new ArrayList<Item>();
+			grocery.add(new Item(Upc.generateCode("12345678901"), "Bananas", 1, 1.5));
+			grocery.add(new Item(Upc.generateCode("22804918500"), "Beef", 0.5, 5.75));
+			grocery.add(new Item(Upc.generateCode("12345678901"), "Bananas", -1, 1.5));
+			grocery.add(new Item(Upc.generateCode("24748119599"), "Chewing gum", 2, -3.99));
+			System.out.println(register.print(grocery));
+		});
+	}
 	/**
 	 * Item avec un prix égal a 0
 	 * I8 (V1 OU V2) V6 (SI V1 -> V9 OU SI V2 ->V8)
@@ -247,7 +310,7 @@ class RegisterTest {
 
 	/**
 	 * Item trop cher
-	 *  I9 (V1 OU V2) V6 (SI V1 -> V9 OU SI V2 ->V8) V4 
+	 *  I9 (V1 ) V6 (SI V1 -> V9 OU SI V2 ->V8) V4 
 	 *  
 	 */
 	@Test
@@ -260,6 +323,42 @@ class RegisterTest {
 			grocery.add(new Item(Upc.generateCode("22804918500"), "Beef", 0.5, 5.75));
 			grocery.add(new Item(Upc.generateCode("12345678901"), "Bananas", -1, 1.5));
 			grocery.add(new Item(Upc.generateCode("64748119599"), "Chewing gum", 2, 48.99));
+			System.out.println(register.print(grocery));
+		});
+	}
+	/**
+	 * Item Fractionnaire trop cher
+	 *  I9 ( V2) V6 (SI V1 -> V9 OU SI V2 ->V8) V4 
+	 *  
+	 */
+	@Test
+	void testAmountToExpensiveFrac() {
+		assertThrows(AmountException.class, () -> {
+			register.changePaper(PaperRoll.LARGE_ROLL);
+			/* Create a list of items */
+			grocery = new ArrayList<Item>();
+			grocery.add(new Item(Upc.generateCode("12345678901"), "Bananas", 1, 1.5));
+			grocery.add(new Item(Upc.generateCode("22804918500"), "Beef", 0.5, 5.75));
+			grocery.add(new Item(Upc.generateCode("12345678901"), "Bananas", -1, 1.5));
+			grocery.add(new Item(Upc.generateCode("24748119599"), "Chewing gum", 2, 48.99));
+			System.out.println(register.print(grocery));
+		});
+	}
+	/**
+	 * Coupon trop cher
+	 *  I9 ( V2) V6 (SI V1 -> V9 OU SI V2 ->V8) V4 
+	 *  
+	 */
+	@Test
+	void testAmountToExpensiveCoupon() {
+		assertThrows(AmountException.class, () -> {
+			register.changePaper(PaperRoll.LARGE_ROLL);
+			/* Create a list of items */
+			grocery = new ArrayList<Item>();
+			grocery.add(new Item(Upc.generateCode("12345678901"), "Bananas", 1, 1.5));
+			grocery.add(new Item(Upc.generateCode("22804918500"), "Beef", 50.5, 5.75));
+			grocery.add(new Item(Upc.generateCode("12345678901"), "Bananas", -1, 1.5));
+			grocery.add(new Item(Upc.generateCode("54748119599"), "Coupon", 2, 48.99));
 			System.out.println(register.print(grocery));
 		});
 	}
