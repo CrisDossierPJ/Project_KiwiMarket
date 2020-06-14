@@ -50,6 +50,7 @@ class RegisterTest {
 	 * I5 : Qt < 0 Première entrée 
 	 * I6 : Qt > 0 article déjà présent 
 	 * I7 : QT fractionnaire pour item normal
+	 * I10: Qt = 0
 	 * 
 	 * Prix : 
 	 * V10 : Prix entre 0 et 35
@@ -229,6 +230,20 @@ class RegisterTest {
 			System.out.println(register.print(grocery));
 		});
 	}
+	/**
+	 * Item avec un prix égal a 0
+	 * I8 (V1 OU V2) V6 (SI V1 -> V9 OU SI V2 ->V8)
+	 */
+	@Test
+	void testAmountZero() {
+		assertThrows(AmountException.class, () -> {
+			register.changePaper(PaperRoll.LARGE_ROLL);
+			/* Create a list of items */
+			grocery = new ArrayList<Item>();
+			grocery.add(new Item(Upc.generateCode("64748119599"), "Chewing gum", 2, 0));
+			System.out.println(register.print(grocery));
+		});
+	}
 
 	/**
 	 * Item trop cher
@@ -275,6 +290,20 @@ class RegisterTest {
 				register.changePaper(PaperRoll.LARGE_ROLL);
 				grocery = new ArrayList<Item>();
 				grocery.add(new Item(Upc.generateCode("72269784569"), "Noix ", -5, 2));
+				System.out.println(register.print(grocery));
+			
+		});
+	}
+	/**
+	 * Premier Item avec quantité négative
+	 * I10 (V1 OU V2) V6 (SI V1 -> V9 OU SI V2 ->V8) V4
+	 */
+	@Test
+	void testQTNull() {
+		assertThrows(InvalidQuantityException.class, () -> {
+				register.changePaper(PaperRoll.LARGE_ROLL);
+				grocery = new ArrayList<Item>();
+				grocery.add(new Item(Upc.generateCode("72269784569"), "Noix ", 0, 2));
 				System.out.println(register.print(grocery));
 			
 		});
