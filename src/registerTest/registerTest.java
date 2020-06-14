@@ -305,7 +305,6 @@ class RegisterTest {
 				grocery = new ArrayList<Item>();
 				grocery.add(new Item(Upc.generateCode("72269784569"), "Noix ", 0, 2));
 				System.out.println(register.print(grocery));
-			
 		});
 	}
 	/**
